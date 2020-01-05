@@ -1,16 +1,9 @@
 clickhouse-zookeeper:
-  image: zookeeper
-  ports:
-  - "2181:2181"
-  - "2182:2182"
-  hostname: clickhouse-zookeeper
-  links:
-  - clickhouse-01
-  - clickhouse-02
-  - clickhouse-03
-  - clickhouse-04
-  - clickhouse-05
-  - clickhouse-06
+    image: zookeeper
+    ports:
+    - "2181:2181"
+    - "2182:2182"
+    hostname: clickhouse-zookeeper
 
 clickhouse-01:
     image: yandex/clickhouse-server:19.13.3.26
@@ -30,8 +23,8 @@ clickhouse-01:
         nofile:
             soft: 262144
             hard: 262144
-  links:
-  - clickhouse-zookeeper
+    links:
+    - clickhouse-zookeeper
 
 clickhouse-02:
     image: yandex/clickhouse-server:19.13.3.26
@@ -51,8 +44,8 @@ clickhouse-02:
         nofile:
             soft: 262144
             hard: 262144
-  links:
-  - clickhouse-zookeeper
+    links:
+    - clickhouse-zookeeper
 
 clickhouse-03:
     image: yandex/clickhouse-server:19.13.3.26
@@ -66,14 +59,14 @@ clickhouse-03:
     - "./ch/config/clickhouse_metrika.xml:/etc/clickhouse-server/metrika.xml"
     - "./ch/config/macros/macros-03.xml:/etc/clickhouse-server/config.d/macros.xml"
     - "./ch/config/users.xml:/etc/clickhouse-server/users.xml"
-    - "./data/ch02/data:/var/lib/clickhouse/data"
-    - "./data/ch02/metadata:/var/lib/clickhouse/metadata"
+    - "./data/ch03/data:/var/lib/clickhouse/data"
+    - "./data/ch03/metadata:/var/lib/clickhouse/metadata"
     ulimits:
         nofile:
             soft: 262144
             hard: 262144
-  links:
-  - clickhouse-zookeeper
+    links:
+    - clickhouse-zookeeper
 
 clickhouse-04:
     image: yandex/clickhouse-server:19.13.3.26
@@ -93,14 +86,14 @@ clickhouse-04:
         nofile:
             soft: 262144
             hard: 262144
-  links:
-  - clickhouse-zookeeper
+    links:
+    - clickhouse-zookeeper
 
 clickhouse-05:
     image: yandex/clickhouse-server:19.13.3.26
     hostname: clickhouse-05
     ports:
-    - "9004:9000"
+    - "9005:9000"
     volumes:
     - "./ch/rollup.xml:/etc/clickhouse-server/config.d/rollup.xml"
     - "./ch/init.sql:/docker-entrypoint-initdb.d/init.sql"
@@ -114,14 +107,14 @@ clickhouse-05:
         nofile:
             soft: 262144
             hard: 262144
-  links:
-  - clickhouse-zookeeper
+    links:
+    - clickhouse-zookeeper
 
 clickhouse-06:
     image: yandex/clickhouse-server:19.13.3.26
     hostname: clickhouse-06
     ports:
-    - "9004:9000"
+    - "9006:9000"
     volumes:
     - "./ch/rollup.xml:/etc/clickhouse-server/config.d/rollup.xml"
     - "./ch/init.sql:/docker-entrypoint-initdb.d/init.sql"
@@ -135,8 +128,8 @@ clickhouse-06:
         nofile:
             soft: 262144
             hard: 262144
-  links:
-  - clickhouse-zookeeper
+    links:
+    - clickhouse-zookeeper
 
 carbon-clickhouse:
   image: lomik/carbon-clickhouse:v0.11.0
@@ -187,6 +180,6 @@ grafana:
 
 haggar:
   build: ./haggar
-  command: sh -c "sleep 30 && ./haggar -agents=10 -metrics=10000 -carbon=carbon-clickhouse:2003"
+  command: sh -c "sleep 300 && ./haggar -agents=10 -metrics=10000 -carbon=carbon-clickhouse:2003"
   links:
     - carbon-clickhouse
