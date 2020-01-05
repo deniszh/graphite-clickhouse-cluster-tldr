@@ -1,0 +1,55 @@
+clickhouse:
+  image: yandex/clickhouse-server:19.13.3.26
+  volumes:
+  - "./ch11/rollup.xml:/etc/clickhouse-server/config.d/rollup.xml"
+  - "./ch11/init.sql:/docker-entrypoint-initdb.d/init.sql"
+  - "./data/ch11/data:/var/lib/clickhouse/data"
+  - "./data/ch11/metadata:/var/lib/clickhouse/metadata"
+carbon-clickhouse:
+  image: lomik/carbon-clickhouse:v0.11.0
+  volumes:
+  - "./data/carbon-clickhouse:/data/carbon-clickhouse"
+  - "./conf/carbon-clickhouse.conf:/etc/carbon-clickhouse/carbon-clickhouse.conf"
+  ports:
+  - "2003:2003" # plain tcp
+  - "2003:2003/udp" # plain udp
+  - "2004:2004" # pickle
+  - "2006:2006" # prometheus remote write
+  links:
+  - clickhouse
+graphite-clickhouse:
+  image: lomik/graphite-clickhouse:v0.11.1
+  volumes:
+  - "./conf/rollup.xml:/etc/graphite-clickhouse/rollup.xml"
+  - "./conf/graphite-clickhouse.conf:/etc/graphite-clickhouse/graphite-clickhouse.conf"
+  - "./data/graphite-clickhouse:/data/graphite-clickhouse"
+  ports:
+  - "9090:9090" # http ui
+  links:
+  - clickhouse
+carbonapi:
+  image: proffust/carbonapi:latest
+  volumes:
+  - "./conf/carbonapi.yaml:/etc/carbonapi.yml"
+  links:
+    - graphite-clickhouse
+    - carbon-clickhouse
+  ports:
+  - "8080:8080" # http ui
+grafana:
+  image: grafana/grafana:6.5.2
+  ports:
+    - "3000:3000"
+  volumes:
+    - ./data/grafana:/var/lib/grafana
+    - ./conf/provisioning/:/etc/grafana/provisioning/
+  environment:
+    - GF_AUTH_ANONYMOUS_ENABLED=true
+    - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+  links:
+    - carbonapi
+haggar:
+  build: ./haggar
+  command: sh -c "sleep 30 && ./haggar -agents=10 -metrics=10000 -carbon=carbon-clickhouse:2003"
+  links:
+    - carbon-clickhouse

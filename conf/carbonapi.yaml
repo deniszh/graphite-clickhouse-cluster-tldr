@@ -1,0 +1,102 @@
+# Listen address, should always include hostname or ip address and a port.
+listen: ":8080"
+# Max concurrent requests to CarbonZipper
+concurency: 0
+cache:
+   # Type of caching. Valid: "mem", "memcache", "null"
+   type: "mem"
+   # Cache limit in megabytes
+   size_mb: 10
+   # Default cache timeout value. Identical to DEFAULT_CACHE_DURATION in graphite-web.
+   defaultTimeoutSec: 60
+   # Only used by memcache type of cache. List of memcache servers.
+   memcachedServers:
+       - "127.0.0.1:11211"
+# Amount of CPUs to use. 0 - unlimited
+cpus: 0
+# Timezone, default - local
+tz: ""
+# If 'true', carbonapi will send requests as is, with globs and braces
+# Otherwise for each request it will generate /metrics/find and then /render
+# individual metrics.
+# true --- faster, but will cause carbonzipper to consume much more RAM.
+#
+# For some backends (e.x. graphite-clickhouse) this *MUST* be set to true in order
+# to get reasonable performance
+#
+# For go-carbon --- it depends on how you use it.
+sendGlobsAsIs: true
+# If sendGlobsAsIs is set and resulting response will be larger than maxBatchSize
+# carbonapi will revert to old behavir. This allows you to use benifits of passing
+# globs as is but keep memory usage in sane limits.
+#
+# For go-carbon you might want it to keep in some reasonable limits, 100 is good "safe" defaults
+#
+# For some backends (e.x. graphite-clickhouse) you might want to set it to some insanly high value, like 100000
+maxBatchSize: 100000
+# If 'true', carbonapi will send requests as is, with globs and braces
+# even without checking maxBatchSize
+# in result it can increase performance for graphite-clickhouse by removing /metric/find request before calling /render
+alwaysSendGlobsAsIs: true
+graphite:
+    # Host:port where to send internal metrics
+    # Empty = disabled
+    host: "carbon-clickhouse:2003"
+    interval: "60s"
+    prefix: "carbon.api"
+    # rules on how to construct metric name. For now only {prefix} and {fqdn} is supported.
+    # {prefix} will be replaced with the content of {prefix}
+    # {fqdn} will be repalced with fqdn
+    pattern: "{prefix}.{fqdn}"
+# Maximium idle connections to carbonzipper
+idleConnections: 10
+pidFile: ""
+# See https://github.com/go-graphite/carbonzipper/blob/master/example.conf#L70-L108 for format explanation
+upstreams:
+    # Number of 100ms buckets to track request distribution in. Used to build
+    # 'carbon.zipper.hostname.requests_in_0ms_to_100ms' metric and friends.
+    # Requests beyond the last bucket are logged as slow
+    # (default of 10 implies "slow" is >1 second).
+    buckets: 10
+    timeouts:
+        # Maximum total backend requesting timeout in ms.
+        # ( How long we may spend making requests. )
+        global: "15s"
+        # Timeout, in ms, once the final backend has been contacted.
+        # ( [Effectively] How long we'll wait for the slowest response. )
+        afterStarted: "2s"
+        # Timeout to connect to the server
+        connect: "200ms"
+    # Number of concurrent requests to any given backend - default is no limit.
+    # If set, you likely want >= MaxIdleConnsPerHost
+    concurrencyLimit: 0
+    # Configures how often keep alive packets will be sent out
+    keepAliveInterval: "30s"
+    # Control http.MaxIdleConnsPerHost. Large values can lead to more idle
+    # connections on the backend servers which may bump into limits; tune with care.
+    maxIdleConnsPerHost: 100
+    # "http://host:port" array of instances of carbonserver stores
+    # This is the *ONLY* config element in this section that MUST be specified.
+    # localhost:9093 - graphite-clickhouse
+    backends:
+      - "http://graphite-clickhouse:9090"
+    carbonsearch:
+        # Instance of carbonsearch backend
+        backend: "http://127.0.0.1:8070"
+        # carbonsearch prefix to reserve/register
+        prefix: "virt.v1.*"
+    # Enable compatibility with graphite-web 0.9
+    # This will affect graphite-web 1.0+ with multiple cluster_servers
+    # Default: disabled
+    graphite09compat: false
+# If not zero, enabled cache for find requests
+# This parameter controls when it will expire (in seconds)
+# Default: 600 (10 minutes)
+expireDelaySec: 0
+logger:
+    - logger: ""
+      file: "stderr"
+      level: "error"
+      encoding: "console"
+      encodingTime: "iso8601"
+      encodingDuration: "seconds"
