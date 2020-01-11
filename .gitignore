@@ -3,5 +3,6 @@ data/carbon_clickhouse/*
 data/ch*
 data/grafana/*
 data/graphite-clickhouse/*
+data/carbon-clickhouse/*
 data/zk*
 .swp
