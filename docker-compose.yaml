@@ -176,7 +176,7 @@ graphite-clickhouse:
   - clickhouse-01
 
 carbonapi:
-  image: proffust/carbonapi:latest
+  image: deniszh/carbonapi:v0.12.6
   volumes:
   - "./conf/carbonapi.yaml:/etc/carbonapi.yml"
   links:
