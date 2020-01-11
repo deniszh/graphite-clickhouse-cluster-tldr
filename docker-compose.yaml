@@ -1,9 +1,24 @@
 clickhouse-zookeeper:
     image: zookeeper
+    environment:
+    - ZOO_LOG4J_PROP="INFO,ROLLINGFILE"
     ports:
     - "2181:2181"
     - "2182:2182"
+    volumes:
+    - "./data/zk001/data:/data"
+    - "./data/zk001/datalog:/datalog"
+    - "./data/zk001/logs:/logs"
     hostname: clickhouse-zookeeper
+
+zoonavigator:
+    image: elkozmon/zoonavigator:latest
+    environment:
+    - HTTP_PORT=9999
+    ports:
+    - "9999:9999"
+    links:
+    - clickhouse-zookeeper
 
 clickhouse-01:
     image: yandex/clickhouse-server:19.13.3.26
@@ -46,6 +61,7 @@ clickhouse-02:
             hard: 262144
     links:
     - clickhouse-zookeeper
+    - carbon-clickhouse
 
 clickhouse-03:
     image: yandex/clickhouse-server:19.13.3.26
@@ -67,6 +83,7 @@ clickhouse-03:
             hard: 262144
     links:
     - clickhouse-zookeeper
+    - carbon-clickhouse
 
 clickhouse-04:
     image: yandex/clickhouse-server:19.13.3.26
@@ -88,6 +105,7 @@ clickhouse-04:
             hard: 262144
     links:
     - clickhouse-zookeeper
+    - carbon-clickhouse
 
 clickhouse-05:
     image: yandex/clickhouse-server:19.13.3.26
@@ -109,6 +127,7 @@ clickhouse-05:
             hard: 262144
     links:
     - clickhouse-zookeeper
+    - carbon-clickhouse
 
 clickhouse-06:
     image: yandex/clickhouse-server:19.13.3.26
@@ -130,6 +149,7 @@ clickhouse-06:
             hard: 262144
     links:
     - clickhouse-zookeeper
+    - carbon-clickhouse
 
 carbon-clickhouse:
   image: lomik/carbon-clickhouse:v0.11.0
@@ -180,6 +200,6 @@ grafana:
 
 haggar:
   build: ./haggar
-  command: sh -c "sleep 300 && ./haggar -agents=10 -metrics=10000 -carbon=carbon-clickhouse:2003"
+  command: sh -c "sleep 3000 && ./haggar -agents=10 -metrics=10000 -carbon=carbon-clickhouse:2003"
   links:
     - carbon-clickhouse

@@ -5,7 +5,7 @@
         <level>trace</level>
         <log>/var/log/clickhouse-server/clickhouse-server.log</log>
         <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
-        <size>1000M</size>
+        <size>10M</size>
         <count>10</count>
         <!-- <console>1</console> --> <!-- Default behavior is autodetection (log to console if not daemon mode and is tty) -->
     </logger>
@@ -209,32 +209,17 @@
         events - send data from table system.events
         asynchronous_metrics - send data from table system.asynchronous_metrics
     -->
-    <!--
     <graphite>
-        <host>localhost</host>
-        <port>42000</port>
+        <host>carbon-clickhouse</host>
+        <port>2003</port>
         <timeout>0.1</timeout>
         <interval>60</interval>
         <root_path>one_min</root_path>
-        <hostname_in_path>true</hostname_in_path>
-
         <metrics>true</metrics>
         <events>true</events>
+        <events_cumulative>false</events_cumulative>
         <asynchronous_metrics>true</asynchronous_metrics>
     </graphite>
-    <graphite>
-        <host>localhost</host>
-        <port>42000</port>
-        <timeout>0.1</timeout>
-        <interval>1</interval>
-        <root_path>one_sec</root_path>
-
-        <metrics>true</metrics>
-        <events>true</events>
-        <asynchronous_metrics>false</asynchronous_metrics>
-    </graphite>
-    -->
-
 
     <!-- Query log. Used only for queries with setting log_queries = 1. -->
     <query_log>

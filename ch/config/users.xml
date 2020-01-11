@@ -20,6 +20,8 @@
             <load_balancing>random</load_balancing>
         </default>
 
+        <optimize_throw_if_noop>1</optimize_throw_if_noop>
+
         <!-- Profile that allows only read queries. -->
         <readonly>
             <readonly>1</readonly>
