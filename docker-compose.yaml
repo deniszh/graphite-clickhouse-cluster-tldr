@@ -1,205 +1,208 @@
-clickhouse-zookeeper:
-    image: zookeeper
-    environment:
-    - ZOO_LOG4J_PROP="INFO,ROLLINGFILE"
-    ports:
-    - "2181:2181"
-    - "2182:2182"
+version: "3"
+services:
+
+  clickhouse-zookeeper:
+      image: zookeeper
+      environment:
+      - ZOO_LOG4J_PROP="INFO,ROLLINGFILE"
+      ports:
+      - "2181:2181"
+      - "2182:2182"
+      volumes:
+      - "./data/zk001/data:/data"
+      - "./data/zk001/datalog:/datalog"
+      - "./data/zk001/logs:/logs"
+      hostname: clickhouse-zookeeper
+
+  zoonavigator:
+      image: elkozmon/zoonavigator:latest
+      environment:
+      - HTTP_PORT=9999
+      ports:
+      - "9999:9999"
+      links:
+      - clickhouse-zookeeper
+
+  clickhouse-01:
+      image: yandex/clickhouse-server:19.13.3.26
+      hostname: clickhouse-01
+      ports:
+      - "9001:9000"
+      volumes:
+      - "./ch/rollup.xml:/etc/clickhouse-server/config.d/rollup.xml"
+      - "./ch/init.sql:/docker-entrypoint-initdb.d/init.sql"
+      - "./ch/config/clickhouse_config.xml:/etc/clickhouse-server/config.xml"
+      - "./ch/config/clickhouse_metrika.xml:/etc/clickhouse-server/metrika.xml"
+      - "./ch/config/macros/macros-01.xml:/etc/clickhouse-server/config.d/macros.xml"
+      - "./ch/config/users.xml:/etc/clickhouse-server/users.xml"
+      - "./data/ch01/data:/var/lib/clickhouse/data"
+      - "./data/ch01/metadata:/var/lib/clickhouse/metadata"
+      - "./data/ch01/log:/var/log/clickhouse-server"
+      ulimits:
+          nofile:
+              soft: 262144
+              hard: 262144
+      links:
+      - clickhouse-zookeeper
+
+  clickhouse-02:
+      image: yandex/clickhouse-server:19.13.3.26
+      hostname: clickhouse-02
+      ports:
+      - "9002:9000"
+      volumes:
+      - "./ch/rollup.xml:/etc/clickhouse-server/config.d/rollup.xml"
+      - "./ch/init.sql:/docker-entrypoint-initdb.d/init.sql"
+      - "./ch/config/clickhouse_config.xml:/etc/clickhouse-server/config.xml"
+      - "./ch/config/clickhouse_metrika.xml:/etc/clickhouse-server/metrika.xml"
+      - "./ch/config/macros/macros-02.xml:/etc/clickhouse-server/config.d/macros.xml"
+      - "./ch/config/users.xml:/etc/clickhouse-server/users.xml"
+      - "./data/ch02/data:/var/lib/clickhouse/data"
+      - "./data/ch02/metadata:/var/lib/clickhouse/metadata"
+      - "./data/ch02/log:/var/log/clickhouse-server"
+      ulimits:
+          nofile:
+              soft: 262144
+              hard: 262144
+      links:
+      - clickhouse-zookeeper
+
+  clickhouse-03:
+      image: yandex/clickhouse-server:19.13.3.26
+      hostname: clickhouse-03
+      ports:
+      - "9003:9000"
+      volumes:
+      - "./ch/rollup.xml:/etc/clickhouse-server/config.d/rollup.xml"
+      - "./ch/init.sql:/docker-entrypoint-initdb.d/init.sql"
+      - "./ch/config/clickhouse_config.xml:/etc/clickhouse-server/config.xml"
+      - "./ch/config/clickhouse_metrika.xml:/etc/clickhouse-server/metrika.xml"
+      - "./ch/config/macros/macros-03.xml:/etc/clickhouse-server/config.d/macros.xml"
+      - "./ch/config/users.xml:/etc/clickhouse-server/users.xml"
+      - "./data/ch03/data:/var/lib/clickhouse/data"
+      - "./data/ch03/metadata:/var/lib/clickhouse/metadata"
+      - "./data/ch03/log:/var/log/clickhouse-server"
+      ulimits:
+          nofile:
+              soft: 262144
+              hard: 262144
+      links:
+      - clickhouse-zookeeper
+
+  clickhouse-04:
+      image: yandex/clickhouse-server:19.13.3.26
+      hostname: clickhouse-04
+      ports:
+      - "9004:9000"
+      volumes:
+      - "./ch/rollup.xml:/etc/clickhouse-server/config.d/rollup.xml"
+      - "./ch/init.sql:/docker-entrypoint-initdb.d/init.sql"
+      - "./ch/config/clickhouse_config.xml:/etc/clickhouse-server/config.xml"
+      - "./ch/config/clickhouse_metrika.xml:/etc/clickhouse-server/metrika.xml"
+      - "./ch/config/macros/macros-04.xml:/etc/clickhouse-server/config.d/macros.xml"
+      - "./ch/config/users.xml:/etc/clickhouse-server/users.xml"
+      - "./data/ch04/data:/var/lib/clickhouse/data"
+      - "./data/ch04/metadata:/var/lib/clickhouse/metadata"
+      - "./data/ch04/log:/var/log/clickhouse-server"
+      ulimits:
+          nofile:
+              soft: 262144
+              hard: 262144
+      links:
+      - clickhouse-zookeeper
+
+  clickhouse-05:
+      image: yandex/clickhouse-server:19.13.3.26
+      hostname: clickhouse-05
+      ports:
+      - "9005:9000"
+      volumes:
+      - "./ch/rollup.xml:/etc/clickhouse-server/config.d/rollup.xml"
+      - "./ch/init.sql:/docker-entrypoint-initdb.d/init.sql"
+      - "./ch/config/clickhouse_config.xml:/etc/clickhouse-server/config.xml"
+      - "./ch/config/clickhouse_metrika.xml:/etc/clickhouse-server/metrika.xml"
+      - "./ch/config/macros/macros-05.xml:/etc/clickhouse-server/config.d/macros.xml"
+      - "./ch/config/users.xml:/etc/clickhouse-server/users.xml"
+      - "./data/ch05/data:/var/lib/clickhouse/data"
+      - "./data/ch05/metadata:/var/lib/clickhouse/metadata"
+      - "./data/ch05/log:/var/log/clickhouse-server"
+      ulimits:
+          nofile:
+              soft: 262144
+              hard: 262144
+      links:
+      - clickhouse-zookeeper
+
+  clickhouse-06:
+      image: yandex/clickhouse-server:19.13.3.26
+      hostname: clickhouse-06
+      ports:
+      - "9006:9000"
+      volumes:
+      - "./ch/rollup.xml:/etc/clickhouse-server/config.d/rollup.xml"
+      - "./ch/init.sql:/docker-entrypoint-initdb.d/init.sql"
+      - "./ch/config/clickhouse_config.xml:/etc/clickhouse-server/config.xml"
+      - "./ch/config/clickhouse_metrika.xml:/etc/clickhouse-server/metrika.xml"
+      - "./ch/config/macros/macros-06.xml:/etc/clickhouse-server/config.d/macros.xml"
+      - "./ch/config/users.xml:/etc/clickhouse-server/users.xml"
+      - "./data/ch06/data:/var/lib/clickhouse/data"
+      - "./data/ch06/metadata:/var/lib/clickhouse/metadata"
+      - "./data/ch06/log:/var/log/clickhouse-server"
+      ulimits:
+          nofile:
+              soft: 262144
+              hard: 262144
+      links:
+      - clickhouse-zookeeper
+
+  carbon-clickhouse:
+    image: lomik/carbon-clickhouse:v0.11.0
     volumes:
-    - "./data/zk001/data:/data"
-    - "./data/zk001/datalog:/datalog"
-    - "./data/zk001/logs:/logs"
-    hostname: clickhouse-zookeeper
-
-zoonavigator:
-    image: elkozmon/zoonavigator:latest
-    environment:
-    - HTTP_PORT=9999
+    - "./data/carbon-clickhouse:/data/carbon-clickhouse"
+    - "./conf/carbon-clickhouse.conf:/etc/carbon-clickhouse/carbon-clickhouse.conf"
     ports:
-    - "9999:9999"
+    - "2003:2003" # plain tcp
+    - "2003:2003/udp" # plain udp
+    - "2004:2004" # pickle
+    - "2006:2006" # prometheus remote write
     links:
-    - clickhouse-zookeeper
+    - clickhouse-01
 
-clickhouse-01:
-    image: yandex/clickhouse-server:19.13.3.26
-    hostname: clickhouse-01
-    ports:
-    - "9001:9000"
+  graphite-clickhouse:
+    image: lomik/graphite-clickhouse:v0.11.1
     volumes:
-    - "./ch/rollup.xml:/etc/clickhouse-server/config.d/rollup.xml"
-    - "./ch/init.sql:/docker-entrypoint-initdb.d/init.sql"
-    - "./ch/config/clickhouse_config.xml:/etc/clickhouse-server/config.xml"
-    - "./ch/config/clickhouse_metrika.xml:/etc/clickhouse-server/metrika.xml"
-    - "./ch/config/macros/macros-01.xml:/etc/clickhouse-server/config.d/macros.xml"
-    - "./ch/config/users.xml:/etc/clickhouse-server/users.xml"
-    - "./data/ch01/data:/var/lib/clickhouse/data"
-    - "./data/ch01/metadata:/var/lib/clickhouse/metadata"
-    ulimits:
-        nofile:
-            soft: 262144
-            hard: 262144
-    links:
-    - clickhouse-zookeeper
-
-clickhouse-02:
-    image: yandex/clickhouse-server:19.13.3.26
-    hostname: clickhouse-02
+    - "./conf/rollup.xml:/etc/graphite-clickhouse/rollup.xml"
+    - "./conf/graphite-clickhouse.conf:/etc/graphite-clickhouse/graphite-clickhouse.conf"
+    - "./data/graphite-clickhouse:/data/graphite-clickhouse"
     ports:
-    - "9002:9000"
-    volumes:
-    - "./ch/rollup.xml:/etc/clickhouse-server/config.d/rollup.xml"
-    - "./ch/init.sql:/docker-entrypoint-initdb.d/init.sql"
-    - "./ch/config/clickhouse_config.xml:/etc/clickhouse-server/config.xml"
-    - "./ch/config/clickhouse_metrika.xml:/etc/clickhouse-server/metrika.xml"
-    - "./ch/config/macros/macros-02.xml:/etc/clickhouse-server/config.d/macros.xml"
-    - "./ch/config/users.xml:/etc/clickhouse-server/users.xml"
-    - "./data/ch02/data:/var/lib/clickhouse/data"
-    - "./data/ch02/metadata:/var/lib/clickhouse/metadata"
-    ulimits:
-        nofile:
-            soft: 262144
-            hard: 262144
+    - "9090:9090" # http ui
     links:
-    - clickhouse-zookeeper
-    - carbon-clickhouse
+    - clickhouse-06
 
-clickhouse-03:
-    image: yandex/clickhouse-server:19.13.3.26
-    hostname: clickhouse-03
+  carbonapi:
+    image: deniszh/carbonapi:v0.12.6
+    volumes:
+    - "./conf/carbonapi.yaml:/etc/carbonapi.yml"
     ports:
-    - "9003:9000"
-    volumes:
-    - "./ch/rollup.xml:/etc/clickhouse-server/config.d/rollup.xml"
-    - "./ch/init.sql:/docker-entrypoint-initdb.d/init.sql"
-    - "./ch/config/clickhouse_config.xml:/etc/clickhouse-server/config.xml"
-    - "./ch/config/clickhouse_metrika.xml:/etc/clickhouse-server/metrika.xml"
-    - "./ch/config/macros/macros-03.xml:/etc/clickhouse-server/config.d/macros.xml"
-    - "./ch/config/users.xml:/etc/clickhouse-server/users.xml"
-    - "./data/ch03/data:/var/lib/clickhouse/data"
-    - "./data/ch03/metadata:/var/lib/clickhouse/metadata"
-    ulimits:
-        nofile:
-            soft: 262144
-            hard: 262144
+    - "8080:8080" # http ui
     links:
-    - clickhouse-zookeeper
-    - carbon-clickhouse
-
-clickhouse-04:
-    image: yandex/clickhouse-server:19.13.3.26
-    hostname: clickhouse-04
-    ports:
-    - "9004:9000"
-    volumes:
-    - "./ch/rollup.xml:/etc/clickhouse-server/config.d/rollup.xml"
-    - "./ch/init.sql:/docker-entrypoint-initdb.d/init.sql"
-    - "./ch/config/clickhouse_config.xml:/etc/clickhouse-server/config.xml"
-    - "./ch/config/clickhouse_metrika.xml:/etc/clickhouse-server/metrika.xml"
-    - "./ch/config/macros/macros-04.xml:/etc/clickhouse-server/config.d/macros.xml"
-    - "./ch/config/users.xml:/etc/clickhouse-server/users.xml"
-    - "./data/ch04/data:/var/lib/clickhouse/data"
-    - "./data/ch04/metadata:/var/lib/clickhouse/metadata"
-    ulimits:
-        nofile:
-            soft: 262144
-            hard: 262144
-    links:
-    - clickhouse-zookeeper
-    - carbon-clickhouse
-
-clickhouse-05:
-    image: yandex/clickhouse-server:19.13.3.26
-    hostname: clickhouse-05
-    ports:
-    - "9005:9000"
-    volumes:
-    - "./ch/rollup.xml:/etc/clickhouse-server/config.d/rollup.xml"
-    - "./ch/init.sql:/docker-entrypoint-initdb.d/init.sql"
-    - "./ch/config/clickhouse_config.xml:/etc/clickhouse-server/config.xml"
-    - "./ch/config/clickhouse_metrika.xml:/etc/clickhouse-server/metrika.xml"
-    - "./ch/config/macros/macros-05.xml:/etc/clickhouse-server/config.d/macros.xml"
-    - "./ch/config/users.xml:/etc/clickhouse-server/users.xml"
-    - "./data/ch05/data:/var/lib/clickhouse/data"
-    - "./data/ch05/metadata:/var/lib/clickhouse/metadata"
-    ulimits:
-        nofile:
-            soft: 262144
-            hard: 262144
-    links:
-    - clickhouse-zookeeper
-    - carbon-clickhouse
-
-clickhouse-06:
-    image: yandex/clickhouse-server:19.13.3.26
-    hostname: clickhouse-06
-    ports:
-    - "9006:9000"
-    volumes:
-    - "./ch/rollup.xml:/etc/clickhouse-server/config.d/rollup.xml"
-    - "./ch/init.sql:/docker-entrypoint-initdb.d/init.sql"
-    - "./ch/config/clickhouse_config.xml:/etc/clickhouse-server/config.xml"
-    - "./ch/config/clickhouse_metrika.xml:/etc/clickhouse-server/metrika.xml"
-    - "./ch/config/macros/macros-06.xml:/etc/clickhouse-server/config.d/macros.xml"
-    - "./ch/config/users.xml:/etc/clickhouse-server/users.xml"
-    - "./data/ch06/data:/var/lib/clickhouse/data"
-    - "./data/ch06/metadata:/var/lib/clickhouse/metadata"
-    ulimits:
-        nofile:
-            soft: 262144
-            hard: 262144
-    links:
-    - clickhouse-zookeeper
-    - carbon-clickhouse
-
-carbon-clickhouse:
-  image: lomik/carbon-clickhouse:v0.11.0
-  volumes:
-  - "./data/carbon-clickhouse:/data/carbon-clickhouse"
-  - "./conf/carbon-clickhouse.conf:/etc/carbon-clickhouse/carbon-clickhouse.conf"
-  ports:
-  - "2003:2003" # plain tcp
-  - "2003:2003/udp" # plain udp
-  - "2004:2004" # pickle
-  - "2006:2006" # prometheus remote write
-  links:
-  - clickhouse-01
-
-graphite-clickhouse:
-  image: lomik/graphite-clickhouse:v0.11.1
-  volumes:
-  - "./conf/rollup.xml:/etc/graphite-clickhouse/rollup.xml"
-  - "./conf/graphite-clickhouse.conf:/etc/graphite-clickhouse/graphite-clickhouse.conf"
-  - "./data/graphite-clickhouse:/data/graphite-clickhouse"
-  ports:
-  - "9090:9090" # http ui
-  links:
-  - clickhouse-01
-
-carbonapi:
-  image: deniszh/carbonapi:v0.12.6
-  volumes:
-  - "./conf/carbonapi.yaml:/etc/carbonapi.yml"
-  links:
     - graphite-clickhouse
-    - carbon-clickhouse
-  ports:
-  - "8080:8080" # http ui
 
-grafana:
-  image: grafana/grafana:6.5.2
-  ports:
-    - "3000:3000"
-  volumes:
-    - ./data/grafana:/var/lib/grafana
-    - ./conf/provisioning/:/etc/grafana/provisioning/
-  environment:
+  grafana:
+    image: grafana/grafana:6.5.2
+    ports:
+      - "3000:3000"
+    volumes:
+    - "./data/grafana:/var/lib/grafana"
+    - "./conf/provisioning:/etc/grafana/provisioning"
+    environment:
     - GF_AUTH_ANONYMOUS_ENABLED=true
     - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-  links:
+    links:
     - carbonapi
 
-haggar:
-  build: ./haggar
-  command: sh -c "sleep 3000 && ./haggar -agents=10 -metrics=10000 -carbon=carbon-clickhouse:2003"
-  links:
+  haggar:
+    build: ./haggar
+    command: sh -c "sleep 3000 && ./haggar -agents=10 -metrics=10000 -carbon=carbon-clickhouse:2003"
+    links:
     - carbon-clickhouse
