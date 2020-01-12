@@ -177,7 +177,7 @@ services:
     ports:
     - "9090:9090" # http ui
     links:
-    - clickhouse-06
+    - clickhouse-01
 
   carbonapi:
     image: deniszh/carbonapi:v0.12.6
@@ -187,6 +187,18 @@ services:
     - "8080:8080" # http ui
     links:
     - graphite-clickhouse
+
+  graphite:
+    image: raintank/graphite-mt:1.1.5-ge4ccaa21
+    environment:
+    - SINGLE_TENANT=true
+    - GRAPHITE_CLUSTER_SERVERS=graphite-clickhouse:9090
+    - GRAPHITE_SECRET_KEY=blah
+    ports:
+    - "80:80"
+    links:
+    - graphite-clickhouse
+    hostname: graphite
 
   grafana:
     image: grafana/grafana:6.5.2

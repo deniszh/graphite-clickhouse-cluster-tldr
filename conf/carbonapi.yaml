@@ -1,7 +1,7 @@
 # Listen address, should always include hostname or ip address and a port.
 listen: ":8080"
 # Max concurrent requests to CarbonZipper
-concurency: 0
+concurency: 100
 cache:
    # Type of caching. Valid: "mem", "memcache", "null"
    type: "mem"
@@ -34,10 +34,6 @@ sendGlobsAsIs: true
 #
 # For some backends (e.x. graphite-clickhouse) you might want to set it to some insanly high value, like 100000
 maxBatchSize: 100000
-# If 'true', carbonapi will send requests as is, with globs and braces
-# even without checking maxBatchSize
-# in result it can increase performance for graphite-clickhouse by removing /metric/find request before calling /render
-alwaysSendGlobsAsIs: true
 graphite:
     # Host:port where to send internal metrics
     # Empty = disabled
@@ -96,7 +92,7 @@ expireDelaySec: 0
 logger:
     - logger: ""
       file: "stderr"
-      level: "error"
+      level: "info"
       encoding: "console"
       encodingTime: "iso8601"
       encodingDuration: "seconds"
