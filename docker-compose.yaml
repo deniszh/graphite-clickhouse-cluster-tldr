@@ -215,6 +215,6 @@ services:
 
   haggar:
     build: ./haggar
-    command: sh -c "sleep 3000 && ./haggar -agents=10 -metrics=10000 -carbon=carbon-clickhouse:2003"
+    command: sh -c "sleep 30 && ./haggar -agents=10 -metrics=10000 -carbon=carbon-clickhouse:2003"
     links:
     - carbon-clickhouse
