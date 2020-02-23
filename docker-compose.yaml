@@ -155,6 +155,13 @@ services:
       links:
       - clickhouse-zookeeper
 
+  chproxy:
+    build: ./chproxy
+    ports:
+      - "9099:9099" # http
+    links:
+      - clickhouse-zookeeper
+
   carbon-clickhouse:
     image: lomik/carbon-clickhouse:v0.11.0
     volumes:
@@ -166,7 +173,7 @@ services:
     - "2004:2004" # pickle
     - "2006:2006" # prometheus remote write
     links:
-    - clickhouse-01
+    - chproxy
 
   graphite-clickhouse:
     image: lomik/graphite-clickhouse:v0.11.1
@@ -177,7 +184,7 @@ services:
     ports:
     - "9090:9090" # http ui
     links:
-    - clickhouse-01
+    - chproxy
 
   carbonapi:
     image: deniszh/carbonapi:v0.12.6

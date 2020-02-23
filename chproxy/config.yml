@@ -1,0 +1,92 @@
+# Whether to print debug logs.
+#
+# By default debug logs are disabled.
+log_debug: false
+
+# Whether to ignore security checks during config parsing.
+#
+# By default security checks are enabled.
+hack_me_please: true
+
+# Optional network lists, might be used as values for `allowed_networks`.
+network_groups:
+  - name: "all"
+    # Each item may contain either IP or IP subnet mask.
+    networks: ["127.0.0.0/24", "10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+
+# Settings for `chproxy` input interfaces.
+server:
+  # Configs for input http interface.
+  # The interface works only if this section is present.
+  http:
+    # TCP address to listen to for http.
+    # May be in the form IP:port . IP part is optional.
+    listen_addr: ":9099"
+
+    # List of allowed networks or network_groups.
+    # Each item may contain IP address, IP subnet mask or a name
+    # from `network_groups`.
+    # By default requests are accepted from all the IPs.
+    allowed_networks: ["all"]
+
+    # ReadTimeout is the maximum duration for proxy to reading the entire
+    # request, including the body.
+    # Default value is 1m
+    read_timeout: 1m
+
+    # WriteTimeout is the maximum duration for proxy before timing out writes of the response.
+    # Default is largest MaxExecutionTime + MaxQueueTime value from Users or Clusters
+    write_timeout: 1m
+
+    # IdleTimeout is the maximum amount of time for proxy to wait for the next request.
+    # Default is 10m
+    idle_timeout: 10m
+
+  # Metrics in prometheus format are exposed on the `/metrics` path.
+  # Access to `/metrics` endpoint may be restricted in this section.
+  # By default access to `/metrics` is unrestricted.
+  metrics:
+    allowed_networks: ["all"]
+
+# Configs for input users.
+users:
+  # Name and password are used to authorize access via BasicAuth or
+  # via `user`/`password` query params.
+  # Password is optional. By default empty password is used.
+  - name: "default"
+    to_cluster: "graphite_ch"
+    to_user: "default"
+    allowed_networks: ["all"]
+
+# Configs for ClickHouse clusters.
+clusters:
+  - name: "graphite_ch"
+    scheme: "http"
+
+    # User configuration for heart beat requests.
+    # Credentials of the first user in clusters.users will be used for heart beat requests to clickhouse.
+    heartbeat:
+      # An interval for checking all cluster nodes for availability
+      # By default each node is checked for every 5 seconds.
+      interval: 5s
+
+      # A timeout of wait response from cluster nodes
+      # By default 3s
+      timeout: 3s
+
+      # The parameter to set the URI to request in a health check
+      # By default "/?query=SELECT%201"
+      request: "/ping"
+
+      # Reference response from clickhouse on health check request
+      # By default "1\n"
+      response: "Ok.\n"
+
+    # The cluster may contain multiple replicas instead of flat nodes.
+    #
+    # Chproxy selects the least loaded node among the least loaded replicas.
+    replicas:
+      - name: "replica1"
+        nodes: ["clickhouse-01:8123", "clickhouse-02:8123", "clickhouse-04:8123"]
+      - name: "replica2"
+        nodes: ["clickhouse-03:8123", "clickhouse-06:8123", "clickhouse-05:8123"]
