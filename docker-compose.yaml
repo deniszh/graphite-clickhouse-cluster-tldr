@@ -24,7 +24,7 @@ services:
       - clickhouse-zookeeper
 
   clickhouse-01:
-      image: yandex/clickhouse-server:19.13.3.26
+      image: yandex/clickhouse-server:20.6.8.5
       hostname: clickhouse-01
       ports:
       - "9001:9000"
@@ -46,7 +46,7 @@ services:
       - clickhouse-zookeeper
 
   clickhouse-02:
-      image: yandex/clickhouse-server:19.13.3.26
+      image: yandex/clickhouse-server:20.6.8.5
       hostname: clickhouse-02
       ports:
       - "9002:9000"
@@ -68,7 +68,7 @@ services:
       - clickhouse-zookeeper
 
   clickhouse-03:
-      image: yandex/clickhouse-server:19.13.3.26
+      image: yandex/clickhouse-server:20.6.8.5
       hostname: clickhouse-03
       ports:
       - "9003:9000"
@@ -90,7 +90,7 @@ services:
       - clickhouse-zookeeper
 
   clickhouse-04:
-      image: yandex/clickhouse-server:19.13.3.26
+      image: yandex/clickhouse-server:20.6.8.5
       hostname: clickhouse-04
       ports:
       - "9004:9000"
@@ -112,7 +112,7 @@ services:
       - clickhouse-zookeeper
 
   clickhouse-05:
-      image: yandex/clickhouse-server:19.13.3.26
+      image: yandex/clickhouse-server:20.6.8.5
       hostname: clickhouse-05
       ports:
       - "9005:9000"
@@ -134,7 +134,7 @@ services:
       - clickhouse-zookeeper
 
   clickhouse-06:
-      image: yandex/clickhouse-server:19.13.3.26
+      image: yandex/clickhouse-server:20.6.8.5
       hostname: clickhouse-06
       ports:
       - "9006:9000"
@@ -163,7 +163,7 @@ services:
       - clickhouse-zookeeper
 
   carbon-clickhouse:
-    image: lomik/carbon-clickhouse:v0.11.0
+    image: lomik/carbon-clickhouse:v0.11.1
     volumes:
     - "./data/carbon-clickhouse:/data/carbon-clickhouse"
     - "./conf/carbon-clickhouse.conf:/etc/carbon-clickhouse/carbon-clickhouse.conf"
@@ -176,7 +176,7 @@ services:
     - chproxy
 
   graphite-clickhouse:
-    image: lomik/graphite-clickhouse:v0.11.1
+    image: lomik/graphite-clickhouse:v0.12.0
     volumes:
     - "./conf/rollup.xml:/etc/graphite-clickhouse/rollup.xml"
     - "./conf/graphite-clickhouse.conf:/etc/graphite-clickhouse/graphite-clickhouse.conf"
@@ -187,7 +187,7 @@ services:
     - chproxy
 
   carbonapi:
-    image: deniszh/carbonapi:v0.12.6
+    image: gographite/carbonapi:v0.14.1
     volumes:
     - "./conf/carbonapi.yaml:/etc/carbonapi.yml"
     ports:
@@ -196,7 +196,8 @@ services:
     - graphite-clickhouse
 
   graphite:
-    image: raintank/graphite-mt:1.1.5-ge4ccaa21
+    # https://github.com/graphite-project/graphite-web/commit/7ebde4c60, May 7 2019
+    image: raintank/graphite-mt:7-7ebde4c60
     environment:
     - SINGLE_TENANT=true
     - GRAPHITE_CLUSTER_SERVERS=graphite-clickhouse:9090
@@ -208,7 +209,7 @@ services:
     hostname: graphite
 
   grafana:
-    image: grafana/grafana:6.5.2
+    image: grafana/grafana:7.2.1
     ports:
       - "3000:3000"
     volumes:
