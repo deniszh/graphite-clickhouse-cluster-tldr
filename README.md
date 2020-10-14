@@ -1,4 +1,4 @@
-## Testing Graphite-Clickhouse w/Clickhouse cluster
+## Graphite-Clickhouse w/Clickhouse cluster Testing / TLDR
 
 ### What is it?
 
@@ -53,5 +53,3 @@ Host | Container | Service
 9099 |      9099 | chproxy
 9999 |      9999 | zoonavigator
 
-
-More details coming, prolly
